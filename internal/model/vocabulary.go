@@ -8,46 +8,29 @@ import (
 
 // vocabularies
 type Vocabulary struct {
-	Id             int64         `json:"id" gorm:"column:id"`
-	Word           string        `json:"word" gorm:"column:word"`
-	Level          string        `json:"level" gorm:"column:level"`
-	FrequenceLevel int           `json:"frequence_level" gorm:"column:frequence_level"`
-	CreateAt       time.Duration `json:"createAt" `
-	UpdateAt       time.Duration `json:"updateAt"`
-	DeleteFlag     int           `json:"delete_flag" gorm:"column:delete_flag"`
+	Id             int64     `json:"id" gorm:"column:id"`
+	Word           string    `json:"word" gorm:"column:word"`
+	Level          string    `json:"level" gorm:"column:level"`
+	FrequenceLevel int       `json:"frequence_level" gorm:"column:frequence_level"`
+	CreatedAt      time.Time `json:"createAt" `
+	UpdatedAt      time.Time `json:"updateAt"`
+	DeleteFlag     int       `json:"delete_flag" gorm:"column:delete_flag"`
 }
 
 func (v *Vocabulary) InsertVocabulary() (err error) {
 	v.DeleteFlag = 0
-	result := db.Model(&Vocabulary{}).Create(&v)
+	result := db.Model(&v).Create(&v)
 	if result.Error != nil {
 		return result.Error
 	}
 	return nil
 }
 
-// 根据等级随机取查找单词
-<<<<<<< HEAD
-<<<<<<< HEAD
-func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
-	// 需要保证不重复
-	return nil
-}
-
-func (v *Vocabulary) SelectByID() error {
-	//result := db.Model(&Vocabulary{}).Where("id=?", id).Select(&v)
-
-	//if result.Error != nil {
-	//	return result.Error
-	//}
-	return nil
-}
-=======
 //func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 //	// 需要保证不重复
 //
 //}
-=======
+
 func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 	// 在业务逻辑层保证抽取的单词不重复，这里只负责随机抽取
 	//利用Gorm设置随机数种子进行随机抽取
@@ -65,7 +48,6 @@ func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 	}
 	return nil
 }
->>>>>>> 777e5581f3a5bf45b1240913d8c9f54ac38d705c
 
 //func (v *Vocabulary) SelectByID() error {
 //	result := db.Model(&Vocabulary{}).Where("id=?", id).Select(&v)
@@ -74,4 +56,3 @@ func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 //		return result.Error
 //	}
 //}
->>>>>>> 912a86911d786c84db16fd53a6aa5fd33bedecf4

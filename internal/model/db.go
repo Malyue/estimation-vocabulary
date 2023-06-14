@@ -13,11 +13,11 @@ import (
 
 var db *gorm.DB
 
-//func init() {
-//
-//}
+func init() {
+	GetDB()
+}
 
-func initMysql(config *_config.Config) {
+func InitMysql(config *_config.Config) {
 	user := config.Mysql.Username
 	password := config.Mysql.Password
 	address := config.Mysql.Addr
@@ -34,7 +34,7 @@ func initMysql(config *_config.Config) {
 		},
 	)
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: newLogger,
 	})
 	if err != nil {
@@ -49,7 +49,7 @@ func initMysql(config *_config.Config) {
 func GetDB() *gorm.DB {
 	config := _config.GetConfig()
 	if db == nil {
-		initMysql(config)
+		InitMysql(config)
 	}
 	return db
 }

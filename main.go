@@ -8,6 +8,8 @@ import (
 func main() {
 	//_algorithm.ImportToDb()
 	config := _config.GetConfig()
+	//_model.InitMysql(config)
+	//_algorithm.ImportToDb()
 	r := _router.Init()
 	r.Run(config.Server.Addr)
 }

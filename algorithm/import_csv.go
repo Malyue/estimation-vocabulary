@@ -44,8 +44,10 @@ func importVocabulary() {
 			//FrequenceLevel: record[2],
 		}
 		// FrequenceLevel看需要添加，然后在结构体中加上即可
-		v.InsertVocabulary()
-		//_model.InsertVocabulary(record[0], record[1], 0)
+		err = v.InsertVocabulary()
+		if err != nil {
+			log.Println(err)
+		}
 	}
 
 }
