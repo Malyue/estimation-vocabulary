@@ -25,13 +25,14 @@ func (v *Vocabulary) InsertVocabulary() (err error) {
 // 根据等级随机取查找单词
 func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 	// 需要保证不重复
-
+	return nil
 }
 
 func (v *Vocabulary) SelectByID() error {
-	result := db.Model(&Vocabulary{}).Where("id=?", id).Select(&v)
+	//result := db.Model(&Vocabulary{}).Where("id=?", id).Select(&v)
 
-	if result.Error != nil {
-		return result.Error
-	}
+	//if result.Error != nil {
+	//	return result.Error
+	//}
+	return nil
 }

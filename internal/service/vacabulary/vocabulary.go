@@ -89,14 +89,15 @@ func GetScore(c *gin.Context) {
 		return
 	}
 
-	user := userTestMap.(*_internal.UserTestStruct)
+	_ = userTestMap.(*_internal.UserTestStruct)
+
 	// TODO 构造算法需要的结构，具体根据算法需求改.
-	userInfo := &_pkg.UserInfo{
-		Score:          user.Score,
-		TotalNum:       user.TotalNum,
-		LadderInfo:     user.LadderInfo,
-		VocabularyInfo: user.VocabularyInfo,
-	}
+	//userInfo := &_pkg.UserInfo{
+	//	Score:          user.Score,
+	//	TotalNum:       user.TotalNum,
+	//	LadderInfo:     user.LadderInfo,
+	//	VocabularyInfo: user.VocabularyInfo,
+	//}
 
 	// TODO 3.调用算法层，参数统一为UserInfo结构,具体怎么调用看算法层的方法,然后根据返回结构去修改全局map的信息
 	// ladderInfo,exist := _internal.UserMap[testId]
