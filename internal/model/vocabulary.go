@@ -23,6 +23,7 @@ func (v *Vocabulary) InsertVocabulary() (err error) {
 }
 
 // 根据等级随机取查找单词
+<<<<<<< HEAD
 func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 	// 需要保证不重复
 	return nil
@@ -36,3 +37,17 @@ func (v *Vocabulary) SelectByID() error {
 	//}
 	return nil
 }
+=======
+//func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
+//	// 需要保证不重复
+//
+//}
+
+//func (v *Vocabulary) SelectByID() error {
+//	result := db.Model(&Vocabulary{}).Where("id=?", id).Select(&v)
+//
+//	if result.Error != nil {
+//		return result.Error
+//	}
+//}
+>>>>>>> 912a86911d786c84db16fd53a6aa5fd33bedecf4

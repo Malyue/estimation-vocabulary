@@ -3,7 +3,7 @@ package vacabulary
 import (
 	_pkg "estimation-vocabulary/algorithm"
 	_internal "estimation-vocabulary/internal"
-	_model "estimation-vocabulary/internal/model"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"time"
@@ -42,15 +42,16 @@ func GetWord(c *gin.Context) {
 	}
 	user := userInfo.(*_internal.UserTestStruct)
 
+	fmt.Println(user)
 	// 3.TODO model那边根据level随机拿一个
-	v := _model.Vocabulary{
-		Level: user.Level,
-	}
+	//v := _model.Vocabulary{
+	//	Level: user.Level,
+	//}
 	// TODO 函数未实现
-	err := v.SelectVocabularyByLevelRandom()
-	if err != nil {
-
-	}
+	//err := v.SelectVocabularyByLevelRandom()
+	//if err != nil {
+	//
+	//}
 
 	// 4.TODO 返回需要的数据
 	_internal.ResponseSuccess(c, _internal.UserTestStruct{})
@@ -89,15 +90,17 @@ func GetScore(c *gin.Context) {
 		return
 	}
 
-	_ = userTestMap.(*_internal.UserTestStruct)
+	user := userTestMap.(*_internal.UserTestStruct)
 
 	// TODO 构造算法需要的结构，具体根据算法需求改.
-	//userInfo := &_pkg.UserInfo{
-	//	Score:          user.Score,
-	//	TotalNum:       user.TotalNum,
-	//	LadderInfo:     user.LadderInfo,
-	//	VocabularyInfo: user.VocabularyInfo,
-	//}
+
+	userInfo := &_pkg.UserInfo{
+		Score:          user.Score,
+		TotalNum:       user.TotalNum,
+		LadderInfo:     user.LadderInfo,
+		VocabularyInfo: user.VocabularyInfo,
+	}
+	fmt.Println(userInfo)
 
 	// TODO 3.调用算法层，参数统一为UserInfo结构,具体怎么调用看算法层的方法,然后根据返回结构去修改全局map的信息
 	// ladderInfo,exist := _internal.UserMap[testId]
@@ -125,4 +128,9 @@ func Exit(c *gin.Context) {
 	// 2.TODO 删掉map
 	_internal.UserMap.Delete(testId)
 	// 3. TODO 返回前端是否成功
+}
+
+func Test(c *gin.Context) {
+	fmt.Println("test service success")
+	_internal.ResponseSuccess(c, nil)
 }

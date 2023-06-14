@@ -27,6 +27,7 @@ func Init() *gin.Engine {
 	vocabularyGroup := r.Group("/api/vocabulary")
 	{
 		vocabularyGroup.GET("/xxx", _vocabulary.StartTest)
+		vocabularyGroup.GET("/test", _vocabulary.Test)
 	}
 
 	return r
