@@ -3,4 +3,7 @@
 
 ## How to deploy
 chmod +x deploy.sh
+
+sed -i -e 's/\r$//' deploy.sh
+
 ./deploy.sh
