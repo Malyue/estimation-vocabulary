@@ -1,7 +1,7 @@
 package vacabulary
 
 import (
-	_pkg "estimation-vocabulary/algorithm"
+	_alg "estimation-vocabulary/algorithm"
 	_internal "estimation-vocabulary/internal"
 	_model "estimation-vocabulary/internal/model"
 	"fmt"
@@ -28,9 +28,9 @@ func StartTest(c *gin.Context) {
 		Level:    level,
 		Score:    0,
 		TotalNum: 0,
-		//VocabularyInfo: &_pkg.VocabularyInfo{},
+		//VocabularyInfo: &_alg.VocabularyInfo{},
 		VocabularyInfo: &_model.Vocabulary{},
-		LadderInfo:     make(map[string]*_pkg.LadderInfo),
+		LadderInfo:     make(map[string]*_alg.LadderInfo),
 		WordInfo:       make(map[string][]int64),
 		StartTime:      time.Now(),
 	})
@@ -128,11 +128,11 @@ func GetScore(c *gin.Context) {
 
 	user := userTestMap.(*_internal.UserTestStruct)
 	// TODO 构造算法需要的结构，具体根据算法需求改.
-	userInfo := &_pkg.UserInfo{
-		Score:          user.Score,
-		TotalNum:       user.TotalNum,
-		LadderInfo:     user.LadderInfo,
-		VocabularyInfo: user.VocabularyInfo,
+	userInfo := &_alg.UserInfo{
+		Score:      user.Score,
+		TotalNum:   user.TotalNum,
+		LadderInfo: user.LadderInfo,
+		//VocabularyInfo: user.VocabularyInfo,
 	}
 	fmt.Println(userInfo)
 

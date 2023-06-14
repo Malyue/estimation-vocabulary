@@ -32,7 +32,7 @@ var UserMap sync.Map
 // 用redis也可以，看哪个省事
 type UserTestStruct struct {
 	// 词汇量
-	Score int
+	Score int64
 	// 当前等级 A1 - C2
 	Level string
 	// 当前答题数
