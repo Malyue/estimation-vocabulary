@@ -23,5 +23,23 @@ type LadderInfo struct {
 type VocabularyInfo struct {
 	wordId int64
 	word   string
+	level  int64
 	known  bool
+}
+
+type Ladder struct {
+	// 在当前阶梯（难度）所答的词数
+	curNum int64
+	// 在当前阶梯（难度）所认识的词数
+	realizeNum int64
+	// 总共回答的词数
+	totalNum int64
+	// 当前难度
+	level int64
+	// 是否结束
+	endFlag bool
+}
+
+func LaderHandler(curLader *Ladder, vocabulary *VocabularyInfo) *Ladder {
+	return new(Ladder)
 }
