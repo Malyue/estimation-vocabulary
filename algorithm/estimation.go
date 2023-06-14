@@ -8,6 +8,30 @@ package algorithm
 func forecastVocabulary(userinfo *UserInfo) {
 	result := int64(0)
 	// TODO 计算分数
+	// 反应不同阶级回答情况的表
+	var diffTagIdentifyMap map[string]*LadderInfo
+	diffTagIdentifyMap = userinfo.LadderInfo
+	// 1 遍历用户再不同阶层的作答情况
+	for curLadderID, curLadderInfo := range diffTagIdentifyMap {
+		// 当前阶层词汇量的上界
+		upperBound := levelVocabulary[curLadderID][1]
+		// 当前阶层词汇量的下界
+		lowerBound := levelVocabulary[curLadderID][0]
+		// 当前阶层认识的词
+		realizeNum := curLadderInfo.knownNun
+		// 当前阶层回答的词的总数
+		curSum := curLadderInfo.curNum
+		// 当前阶层回答的词的正确率
+		rate := 1.0 * realizeNum / curSum
+		// 预测当前阶层知道的词的总数
+		estVcbSize := lowerBound + ((upperBound - lowerBound) * rate)
+		// 当前阶层的权重
+		weight := 1.0 * curSum / userinfo.TotalNum
+
+		// 当前阶层在加权后知道的词的总数
+		result += estVcbSize * weight
+
+	}
 	userinfo.Score = result
 }
 
