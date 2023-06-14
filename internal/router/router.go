@@ -28,6 +28,10 @@ func Init() *gin.Engine {
 	{
 		vocabularyGroup.GET("/xxx", _vocabulary.StartTest)
 		vocabularyGroup.GET("/test", _vocabulary.Test)
+		// 获得可选等级列表
+		vocabularyGroup.GET("/getLevelList", _vocabulary.ShowLevelList)
+		// 批处理接口-接收一个josn文件
+		vocabularyGroup.POST("/batch", _vocabulary.GetScoreBatch)
 	}
 
 	return r

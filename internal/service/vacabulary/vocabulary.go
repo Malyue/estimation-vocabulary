@@ -1,18 +1,67 @@
 package vacabulary
 
 import (
+	"encoding/json"
 	_alg "estimation-vocabulary/algorithm"
 	_internal "estimation-vocabulary/internal"
 	_model "estimation-vocabulary/internal/model"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"io"
+	"log"
+	"path/filepath"
 	"time"
 )
 
+// 可选等级显示结构
+type LevelStruct struct {
+	Label string `json:"lable"`
+	Value string `json:"value"`
+}
+
+// 可选等级列表
+var levels = []LevelStruct{
+	// TODO 创建一个级别的结构返回,大概三个吧，根据业务看看怎么设置
+	// 例子 {Label:"小白",Value:"A1"}
+	{Label: "小白", Value: "A1"},
+}
+
+// TODO 批处理接收文件格式 - 暂定这种,具体还得取决于批处理的具体含义
+/*
+	{
+		"wordList":{
+			{"word":a,"known":false},
+			{"word":b,"known":true},
+		}
+	}
+*/
+// 批处理接收结构
+type Batch struct {
+	WordList []VocabularyBatch `json:"wordList"`
+}
+
+type VocabularyBatch struct {
+	Word  string `json:"word"`
+	Known bool   `json:"known"`
+}
+
+// 选中单词认识与否的请求结构
+type WordKnownReq struct {
+	TestId string `json:"testId"`
+	WordId string `json:"wordId"`
+	Word   string `json:"word"`
+	Known  bool   `json:"known"`
+}
+
+// @Method GET
+// Describe 显示可选的初始级别
+func ShowLevelList(c *gin.Context) {
+	_internal.ResponseSuccess(c, levels)
+}
+
 // @Method Get
 // @Param level string
-
 func StartTest(c *gin.Context) {
 	// TODO 从前端拿到用户初始所选level
 	level := "A1"
@@ -44,7 +93,7 @@ func StartTest(c *gin.Context) {
 //  @Param test_id
 
 func GetWord(c *gin.Context) {
-	// 1. 接收testId
+	// 1. 接收testId,只有一个方法就直接从路由里读取算了
 
 	testId := uuid.New().String()
 	var totalNum int64 = 0
@@ -109,8 +158,17 @@ func GetScore(c *gin.Context) {
 		wordId:1,
 		Known:true/false
 	*/
+
+	// body 里的 json 解析方法
+	wordReq := WordKnownReq{}
+	if err := c.ShouldBindJSON(&wordReq); err != nil {
+		log.Println("解析body错误", err)
+		_internal.ResponseError(c, _internal.CodeErrParseBody)
+		return
+	}
+
 	// TODO 1.获得请求参数
-	testId := uuid.New()
+	testId := uuid.New().String()
 	/*
 		调用算法
 		wordId:1,
@@ -171,4 +229,42 @@ func Exit(c *gin.Context) {
 func Test(c *gin.Context) {
 	fmt.Println("test service success")
 	_internal.ResponseSuccess(c, nil)
+}
+
+// @Method POST
+// @Parm form-data
+// @Describe 批处理
+func GetScoreBatch(c *gin.Context) {
+	file, _ := c.FormFile("file")
+	// 识别后缀，这里直接限制json
+	ext := filepath.Ext(file.Filename)
+	if ext != ".json" {
+		log.Println("文件类型出错,批处理需要json文件")
+		_internal.ResponseError(c, _internal.CodeErrFileFormat)
+		return
+	}
+
+	src, _ := file.Open()
+	defer src.Close()
+
+	data, err := io.ReadAll(src)
+	if err != nil {
+		log.Println("读取文件数据错误", err)
+		_internal.ResponseError(c, _internal.CodeServerBusy)
+		return
+	}
+
+	var batchData Batch
+	err = json.Unmarshal(data, &batchData)
+	if err != nil {
+		log.Println("解析json错误", err)
+		_internal.ResponseError(c, _internal.CodeErrJsonFormat)
+		return
+	}
+
+	// TODO 如何根据解析出的json去调用我们自己的方法
+
+	// TODO 计算出最后成绩然后返回
+
+	//_internal.ResponseSuccess()
 }

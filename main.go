@@ -2,14 +2,17 @@ package main
 
 import (
 	_config "estimation-vocabulary/config"
+	_internal "estimation-vocabulary/internal"
 	_router "estimation-vocabulary/internal/router"
+	"sync"
 )
 
 func main() {
-	//_algorithm.ImportToDb()
 	config := _config.GetConfig()
-	//_model.InitMysql(config)
-	//_algorithm.ImportToDb()
 	r := _router.Init()
+	// 初始化全局map
+	_internal.UserMap = sync.Map{}
+	// 开启定时任务定期清除没有被删除的map
+	//go _pkg.DeleteMap(_internal.UserMap)
 	r.Run(config.Server.Addr)
 }
