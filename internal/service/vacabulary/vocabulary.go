@@ -302,7 +302,7 @@ func GetResult(c *gin.Context) {
 		EndFlag:        user.EndFlag,
 		Level:          user.Level,
 	}
-	fmt.Println(userInfo, "))))))))))))))))))))")
+
 	_alg.ForecastVocabulary(userInfo)
 	//这里省略赋值回userTestStruct,直接返回
 	user.Score = userInfo.Score
@@ -311,9 +311,6 @@ func GetResult(c *gin.Context) {
 	user.Level = userInfo.Level
 
 	score := user.Score
-	fmt.Println(userInfo, "***************")
-	fmt.Println(user.Score, "%%%%%%%%%%%%%%")
-	fmt.Println(score, "&&&&&&&&&&&&&&&")
 	_internal.ResponseSuccess(c, score)
 }
 
