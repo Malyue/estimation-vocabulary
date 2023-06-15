@@ -160,7 +160,8 @@ func GetWord(c *gin.Context) {
 		}
 	}
 	fmt.Println(v, "&&&&&&&&&&&&&&")
-
+	//WordInfo记录已返回的单词
+	user.WordInfo[user.Level] = append(user.WordInfo[user.Level], v.Id)
 	//修改user信息
 	user.VocabularyInfo = &_alg.VocabularyInfo{
 		WordId: v.Id,
@@ -267,7 +268,7 @@ func UpdateLevel(c *gin.Context) {
 	//覆盖算法返回结果
 	user.Score = userInfo.Score
 	user.TotalNum = userInfo.TotalNum
-	user.LadderInfo = userInfo.LadderInfo
+	//user.LadderInfo = userInfo.LadderInfo
 	user.Level = userInfo.Level
 
 	// TODO 4.返回前端，告知请求成功，正常的话不需要数据返回
