@@ -293,9 +293,27 @@ func GetResult(c *gin.Context) {
 	}
 	user := userTestMap.(*_internal.UserTestStruct)
 
-	// 2. TODO 两种可能吧.大概率是直接从map里读取score直接返回即可，或者看是否要从算法层再计算一遍
-	//因为之前先利用算法计算Score后存在了userTestStruct中，只要他不调用UpdateLevel（）score就不会变，所以直接将userTestStruct的Score返回即可
+	// 2. TODO 调用forcastVocabulary（）
+	userInfo := &_alg.UserInfo{
+		Score:          user.Score,
+		TotalNum:       user.TotalNum,
+		LadderInfo:     user.LadderInfo,
+		VocabularyInfo: user.VocabularyInfo,
+		EndFlag:        user.EndFlag,
+		Level:          user.Level,
+	}
+	fmt.Println(userInfo, "))))))))))))))))))))")
+	_alg.ForecastVocabulary(userInfo)
+	//这里省略赋值回userTestStruct,直接返回
+	user.Score = userInfo.Score
+	user.TotalNum = userInfo.TotalNum
+	user.LadderInfo = userInfo.LadderInfo
+	user.Level = userInfo.Level
+
 	score := user.Score
+	fmt.Println(userInfo, "***************")
+	fmt.Println(user.Score, "%%%%%%%%%%%%%%")
+	fmt.Println(score, "&&&&&&&&&&&&&&&")
 	_internal.ResponseSuccess(c, score)
 }
 
