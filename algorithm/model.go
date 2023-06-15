@@ -2,7 +2,7 @@ package algorithm
 
 // 用于存储每个等级的上下限
 var levelVocabulary = map[string][2]int64{
-	"A1": {500, 1000},
+	"A1": {0, 1000},
 	"A2": {1000, 2000},
 	"B1": {2000, 3000},
 	"B2": {3000, 5000},

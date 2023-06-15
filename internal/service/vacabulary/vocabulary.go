@@ -1,6 +1,7 @@
 package vacabulary
 
 import (
+	"bytes"
 	"encoding/json"
 	_alg "estimation-vocabulary/algorithm"
 	_internal "estimation-vocabulary/internal"
@@ -9,7 +10,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"io"
+	"io/ioutil"
 	"log"
+	"net/url"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -26,11 +29,13 @@ var levels = []LevelStruct{
 	// TODO 创建一个级别的结构返回,大概三个吧，根据业务看看怎么设置
 	// 例子 {Label:"小白",Value:"A1"}
 	{Label: "小白", Value: "A1"},
+	{Label: "", Value: ""},
+	{Label: "", Value: ""},
 }
 
 // 用于存储每个等级的上下限
 var levelVocabulary = map[string][2]int64{
-	"A1": {500, 1000},
+	"A1": {0, 1000},
 	"A2": {1000, 2000},
 	"B1": {2000, 3000},
 	"B2": {3000, 5000},
@@ -90,8 +95,7 @@ func ShowLevelList(c *gin.Context) {
 // @Param level string
 func StartTest(c *gin.Context) {
 	// TODO 从前端拿到用户初始所选level
-	level := "A1"
-	level = c.Query("level")
+	level := c.Query("level")
 	//
 	//level := c.Query("level")
 	score := levelVocabulary[level][0]
@@ -115,6 +119,7 @@ func StartTest(c *gin.Context) {
 
 	// 3.返回一个testId
 	_internal.ResponseSuccess(c, testId)
+	c.Set("test_id", testId)
 }
 
 //	@Method Get
@@ -148,14 +153,17 @@ func GetWord(c *gin.Context) {
 		if err != nil {
 			_internal.ResponseError(c, _internal.CodeWordSelectErr)
 		}
+		fmt.Println("[WORD]", v.Word, v.Id)
 
 		//判断随机抽出来的单词是否重复
 		//TODO 解决uuid存储int问题（uuid是int128）
 		ok, err := _internal.JudgeIfRepeated(testId, v.Level, v.Id)
 		if err != nil {
+			log.Println(err)
 			_internal.ResponseError(c, _internal.CodeWordRepeat)
+			return
 		}
-		if ok {
+		if !ok {
 			break
 		}
 	}
@@ -192,7 +200,7 @@ func UpdateLevel(c *gin.Context) {
 	*/
 
 	// TODO 1.获得请求参数
-	testId := uuid.New().String()
+	//testId := uuid.New().String()
 	// body 里的 json 解析方法
 	wordReq := WordKnownReq{}
 	if err := c.ShouldBindJSON(&wordReq); err != nil {
@@ -200,8 +208,7 @@ func UpdateLevel(c *gin.Context) {
 		_internal.ResponseError(c, _internal.CodeErrParseBody)
 		return
 	}
-	testId = wordReq.TestId
-	fmt.Println(wordReq, "&&&&&&&&&&")
+	testId := wordReq.TestId
 	/*
 		调用算法
 		wordId:1,
@@ -240,6 +247,7 @@ func UpdateLevel(c *gin.Context) {
 	if err != nil {
 		_internal.ResponseError(c, _internal.CodeErrParseInt)
 	}
+
 	user.VocabularyInfo = &_alg.VocabularyInfo{
 		WordId: wordIdInt,
 		Word:   wordReq.Word,
@@ -261,10 +269,7 @@ func UpdateLevel(c *gin.Context) {
 	// TODO 3.调用算法层，参数统一为UserInfo结构,具体怎么调用看算法层的方法,然后根据返回结构去修改全局map的信息
 	// ladderInfo,exist := _internal.UserMap[testId]
 	//调用算法层
-	fmt.Println("))))))))))))))))")
 	_alg.LadderHandler(userInfo)
-	fmt.Println("$$$$$$$$$$$$$$")
-	fmt.Println(userInfo, "@@@@@@@@@@@@@")
 	//覆盖算法返回结果
 	user.Score = userInfo.Score
 	user.TotalNum = userInfo.TotalNum
@@ -286,10 +291,15 @@ func GetResult(c *gin.Context) {
 	// 返回结果
 	// 1. TODO 获得testid
 	testId := c.Query("test_id")
+	if testId == "" {
+		a, _ := c.Get("test_id")
+		testId = a.(string)
+	}
 
 	userTestMap, exist := _internal.UserMap.Load(testId)
 	if !exist {
 		_internal.ResponseError(c, _internal.CodeInvalidTestId)
+		return
 	}
 	user := userTestMap.(*_internal.UserTestStruct)
 	user.EndFlag = true
@@ -360,10 +370,54 @@ func GetScoreBatch(c *gin.Context) {
 		return
 	}
 
+	// 创建一个map,这里自己设置从哪个等级开始
+	queryParams, _ := url.ParseQuery(c.Request.URL.RawQuery)
+	//c.Request.URL.Query().Set("level", "A1")
+	queryParams.Set("level", "A1")
+	c.Request.URL.RawQuery = queryParams.Encode()
+	cCopy := c.Copy()
+	c.Request.URL.RawQuery = cCopy.Request.URL.RawQuery
+	StartTest(c)
+
+	testid, _ := c.Get("test_id")
+	testId := testid.(string)
+
+	//queryParams, _ = url.ParseQuery(c.Request.URL.RawQuery)
+	////c.Request.URL.Query().Set("level", "A1")
+	//queryParams.Set("test_id", testId)
+	//c.Request.URL.RawQuery = queryParams.Encode()
+	//cCopy = c.Copy()
+	//c.Request.URL.RawQuery = cCopy.Request.URL.RawQuery
+
 	// TODO 如何根据解析出的json去调用我们自己的方法
+	vocabularyList := batchData.WordList
+
+	// 拆分一下单词构造一下然后逐个调用接口
+	for _, vocabulary := range vocabularyList {
+		v := &_model.Vocabulary{
+			Word: vocabulary.Word,
+		}
+		// 根据名称查wordid
+		v.LoadByWord()
+		// 去调用提交单词接口
+		jsonData := map[string]interface{}{
+			"test_id": testId,
+			"word_id": fmt.Sprint(v.Id),
+			"word":    v.Word,
+			"known":   vocabulary.Known,
+		}
+		requestBody, err := json.Marshal(jsonData)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		c.Request.Body = ioutil.NopCloser(bytes.NewReader(requestBody))
+
+		UpdateLevel(c)
+	}
 
 	// TODO 计算出最后成绩然后返回
-
+	GetResult(c)
 	//_internal.ResponseSuccess()
 }
 

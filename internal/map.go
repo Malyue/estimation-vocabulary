@@ -72,7 +72,7 @@ func JudgeIfRepeated(testId string, level string, wordId int64) (bool, error) {
 		// 不存在这个level，可能是处于刚升级的情况
 		// TODO 这一步需要根据业务逻辑看看是否需要更改
 		//暂时不需要改
-		return true, nil
+		return false, nil
 	}
 	// 查看wordId是否存在，这个看一下有没有优化的方法
 	for _, value := range wordIdList {

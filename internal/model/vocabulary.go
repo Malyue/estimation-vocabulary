@@ -1,7 +1,6 @@
 package model
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 )
@@ -39,7 +38,6 @@ func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 	rand.Seed(time.Now().UnixNano())
 
 	err := db.Model(&Vocabulary{}).Where("level = ?", v.Level).Order("RAND()").Limit(1).Find(&v).Error
-	fmt.Println(v, "@@@@@@@@@@@")
 	if err != nil {
 		return err
 	}
@@ -53,3 +51,11 @@ func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 //		return result.Error
 //	}
 //}
+
+func (v *Vocabulary) LoadByWord() error {
+	result := db.Model(&Vocabulary{}).Where("word=?", v.Word).Find(&v)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
+}
