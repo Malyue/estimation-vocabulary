@@ -162,7 +162,6 @@ func GetWord(c *gin.Context) {
 	fmt.Println(v, "&&&&&&&&&&&&&&")
 
 	//修改user信息
-	user.TotalNum++
 	user.VocabularyInfo = &_alg.VocabularyInfo{
 		WordId: v.Id,
 		Word:   v.Word,
@@ -175,7 +174,7 @@ func GetWord(c *gin.Context) {
 		Word:     v.Word,
 		TotalNum: user.TotalNum,
 	}
-
+	fmt.Println(res, "*********")
 	//返回
 	_internal.ResponseSuccess(c, res)
 }
@@ -376,3 +375,25 @@ func GetScoreBatch(c *gin.Context) {
 //TODO 4、前端受到level更新成功的返回后，继续调用获取单词的请求
 //TODO 5、当前端获取单词到达某一数目的时候(该计数器由前端和后端一同保持),前端可以选择发起结束请求
 //TODO 6、后端处理结束请求，调用算法的forecastVocabulary函数，然后将Score返回给前端展示
+
+type MapResp struct {
+	TestId   string                    `json:"test_id"`
+	UserInfo *_internal.UserTestStruct `json:"user_info"`
+}
+
+// 获得当前全局变量
+func GetMap(c *gin.Context) {
+	resp := []MapResp{}
+	_internal.UserMap.Range(func(key, value interface{}) bool {
+		if value == nil {
+			return false
+		}
+		res := MapResp{}
+		res.TestId = key.(string)
+		res.UserInfo = value.(*_internal.UserTestStruct)
+
+		resp = append(resp, res)
+		return true
+	})
+	_internal.ResponseSuccess(c, resp)
+}

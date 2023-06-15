@@ -42,6 +42,8 @@ func Init() *gin.Engine {
 		vocabularyGroup.GET("/exit", _vocabulary.Exit)
 
 		vocabularyGroup.GET("/test", _vocabulary.Test)
+
+		vocabularyGroup.GET("/getMap", _vocabulary.GetMap)
 	}
 
 	return r

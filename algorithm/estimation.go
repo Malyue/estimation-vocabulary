@@ -1,5 +1,7 @@
 package algorithm
 
+import "fmt"
+
 // TODO 应该遍历所有阶梯 在用户点击结束的时候才调用
 // @Title forecastVocabulary
 // @Description
@@ -11,8 +13,11 @@ func ForecastVocabulary(userinfo *UserInfo) {
 	// 反应不同阶级回答情况的表
 	var diffTagIdentifyMap map[string]*LadderInfo
 	diffTagIdentifyMap = userinfo.LadderInfo
+	fmt.Println(diffTagIdentifyMap)
 	// 1 遍历用户再不同阶层的作答情况
-	for curLadderID, curLadderInfo := range diffTagIdentifyMap {
+	for curLadderID, curLadderInfo := range userinfo.LadderInfo {
+		fmt.Println(curLadderID, "&&&")
+		fmt.Println(curLadderInfo, "****")
 		// 当前阶层词汇量的上界
 		upperBound := levelVocabulary[curLadderID][1]
 		// 当前阶层词汇量的下界

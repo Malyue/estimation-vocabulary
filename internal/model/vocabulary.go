@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -37,11 +38,8 @@ func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 	//设置随机数种子
 	rand.Seed(time.Now().UnixNano())
 
-	err := db.Model(&Vocabulary{}).Where("level =?", v.Level).
-		Order("RAND()").
-		Limit(1).
-		Find(&v).
-		Error
+	err := db.Model(&Vocabulary{}).Where("level = ?", "A1").Order("RAND()").Limit(1).Find(&v).Error
+	fmt.Println(v, "@@@@@@@@@@@")
 	if err != nil {
 		return err
 	}
