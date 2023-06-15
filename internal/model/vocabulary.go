@@ -1,7 +1,6 @@
 package model
 
 import (
-	"gorm.io/gorm"
 	"math/rand"
 	"time"
 )
@@ -39,9 +38,9 @@ func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 	rand.Seed(time.Now().UnixNano())
 
 	err := db.Model(&Vocabulary{}).Where("level =?", v.Level).
-		Order(gorm.Expr("RAND()")).
+		Order("RAND()").
 		Limit(1).
-		First(v).
+		Find(&v).
 		Error
 	if err != nil {
 		return err

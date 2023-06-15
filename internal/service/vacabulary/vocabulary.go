@@ -104,7 +104,7 @@ func StartTest(c *gin.Context) {
 	_internal.UserMap.Store(testId, &_internal.UserTestStruct{
 		Level:    level,
 		Score:    score,
-		TotalNum: 1,
+		TotalNum: 0,
 		//VocabularyInfo: &_alg.VocabularyInfo{},
 		VocabularyInfo: &_alg.VocabularyInfo{},
 		LadderInfo:     make(map[string]*_alg.LadderInfo),
@@ -159,6 +159,8 @@ func GetWord(c *gin.Context) {
 			break
 		}
 	}
+	fmt.Println(v, "&&&&&&&&&&&&&&")
+
 	//修改user信息
 	user.TotalNum++
 	user.VocabularyInfo = &_alg.VocabularyInfo{
@@ -199,6 +201,7 @@ func UpdateLevel(c *gin.Context) {
 		return
 	}
 	testId = wordReq.TestId
+	fmt.Println(wordReq, "&&&&&&&&&&")
 	/*
 		调用算法
 		wordId:1,
@@ -215,7 +218,7 @@ func UpdateLevel(c *gin.Context) {
 	}
 
 	user := userTestMap.(*_internal.UserTestStruct)
-
+	fmt.Println(user, "*************")
 	//TODO 更新userTestStruct的LadderInfo 信息(算法里面实现了这个逻辑，这段去掉)
 	//level := user.Level
 	//
@@ -258,7 +261,10 @@ func UpdateLevel(c *gin.Context) {
 	// TODO 3.调用算法层，参数统一为UserInfo结构,具体怎么调用看算法层的方法,然后根据返回结构去修改全局map的信息
 	// ladderInfo,exist := _internal.UserMap[testId]
 	//调用算法层
+	fmt.Println("))))))))))))))))")
 	_alg.LadderHandler(userInfo)
+	fmt.Println("$$$$$$$$$$$$$$")
+	fmt.Println(userInfo, "@@@@@@@@@@@@@")
 	//覆盖算法返回结果
 	user.Score = userInfo.Score
 	user.TotalNum = userInfo.TotalNum
@@ -279,18 +285,27 @@ func UpdateLevel(c *gin.Context) {
 func GetResult(c *gin.Context) {
 	// 返回结果
 	// 1. TODO 获得testid
+	testId := c.Query("test_id")
+
+	userTestMap, exist := _internal.UserMap.Load(testId)
+	if !exist {
+		_internal.ResponseError(c, _internal.CodeInvalidTestId)
+	}
+	user := userTestMap.(*_internal.UserTestStruct)
 
 	// 2. TODO 两种可能吧.大概率是直接从map里读取score直接返回即可，或者看是否要从算法层再计算一遍
-	//_internal.ResponseSuccess()
+	//因为之前先利用算法计算Score后存在了userTestStruct中，只要他不调用UpdateLevel（）score就不会变，所以直接将userTestStruct的Score返回即可
+	score := user.Score
+	_internal.ResponseSuccess(c, score)
 }
 
 func Exit(c *gin.Context) {
 	// 1.TODO 获取testid
 	testId := uuid.New().String()
-	//testId := c.Query("test_id")
+	testId = c.Query("test_id")
 	// 2.TODO 删掉map
 	_internal.UserMap.Delete(testId)
-	// 3. TODO 返回前端是否成功  是否需要返回分数（待定）
+	// 3. TODO 返回前端是否成功
 	_internal.ResponseSuccess(c, nil)
 }
 

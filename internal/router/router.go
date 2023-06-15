@@ -26,12 +26,22 @@ func Init() *gin.Engine {
 
 	vocabularyGroup := r.Group("/api/vocabulary")
 	{
-		vocabularyGroup.GET("/xxx", _vocabulary.StartTest)
-		vocabularyGroup.GET("/test", _vocabulary.Test)
+		//建立连接，返回test_id 测试完成
+		vocabularyGroup.GET("/connect", _vocabulary.StartTest)
 		// 获得可选等级列表
 		vocabularyGroup.GET("/getLevelList", _vocabulary.ShowLevelList)
 		// 批处理接口-接收一个josn文件
 		vocabularyGroup.POST("/batch", _vocabulary.GetScoreBatch)
+		//获取一个当前level的单词
+		vocabularyGroup.GET("/getWord", _vocabulary.GetWord)
+		//用户是否认识单词处理接口
+		vocabularyGroup.POST("/wordKnow", _vocabulary.UpdateLevel)
+		//用户获取最终词汇量数目接口 测试完成
+		vocabularyGroup.GET("/getResult", _vocabulary.GetResult)
+		//测试App连通的接口 测试完成
+		vocabularyGroup.GET("/exit", _vocabulary.Exit)
+
+		vocabularyGroup.GET("/test", _vocabulary.Test)
 	}
 
 	return r
