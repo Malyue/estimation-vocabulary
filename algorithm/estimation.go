@@ -44,6 +44,7 @@ func LadderHandler(userinfo *UserInfo) {
 	// TODO 有可能需要更改
 	if userinfo.EndFlag {
 		ForecastVocabulary(userinfo)
+		return
 	}
 	level := userinfo.Level
 	// 触发阶梯变化最少的单词个数

@@ -91,7 +91,7 @@ func ShowLevelList(c *gin.Context) {
 func StartTest(c *gin.Context) {
 	// TODO 从前端拿到用户初始所选level
 	level := "A1"
-
+	level = c.Query("level")
 	//
 	//level := c.Query("level")
 	score := levelVocabulary[level][0]
@@ -292,7 +292,7 @@ func GetResult(c *gin.Context) {
 		_internal.ResponseError(c, _internal.CodeInvalidTestId)
 	}
 	user := userTestMap.(*_internal.UserTestStruct)
-
+	user.EndFlag = true
 	// 2. TODO 调用forcastVocabulary（）
 	userInfo := &_alg.UserInfo{
 		Score:          user.Score,
@@ -303,7 +303,7 @@ func GetResult(c *gin.Context) {
 		Level:          user.Level,
 	}
 
-	_alg.ForecastVocabulary(userInfo)
+	_alg.LadderHandler(userInfo)
 	//这里省略赋值回userTestStruct,直接返回
 	user.Score = userInfo.Score
 	user.TotalNum = userInfo.TotalNum
