@@ -29,19 +29,21 @@ var UserMap sync.Map
 // 存储用户一次测试的相关内容(定期清理)
 // 用redis也可以，看哪个省事
 type UserTestStruct struct {
-	// 词汇量
+	// 词汇量 后端维护
 	Score int64
-	// 当前等级 A1 - C2
+	// 当前等级 A1 - C2 后端维护
 	Level string
-	// 当前答题数
+	// 当前答题数  前后端共同维护
 	TotalNum int64
-	//VocabularyInfo *_pkg.VocabularyInfo
-	//TODO 确定Vocabulary结构体的类别
+
+	//TODO 暂时没用到
 	VocabularyInfo *_alg.VocabularyInfo
 	// 所有难度的对应数据，key为level
 	LadderInfo map[string]*_alg.LadderInfo
 	// 详细信息，包括每个阶段的认识数目以及对应的wordlist,level作为key,wordId为value
-	WordInfo  map[string][]int64
+	WordInfo map[string][]int64
+	//整个预测结束标志，默认false，只有在确认结束，才改为true
+	EndFlag   bool
 	StartTime time.Time
 }
 

@@ -11,6 +11,7 @@ const (
 	CodeErrFileFormat
 	CodeErrJsonFormat
 	CodeErrParseBody
+	CodeErrParseInt
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -22,6 +23,7 @@ var codeMsgMap = map[ResCode]string{
 	CodeErrFileFormat: "文件格式错误，需要json文件",
 	CodeErrJsonFormat: "json格式错误，无法解析",
 	CodeErrParseBody:  "解析body错误",
+	CodeErrParseInt:   "ParseInt错误",
 }
 
 // Msg 返回特定的错误提示信息
