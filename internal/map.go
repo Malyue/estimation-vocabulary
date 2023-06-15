@@ -2,9 +2,7 @@ package internal
 
 import (
 	"errors"
-	_pkg "estimation-vocabulary/algorithm"
-	_model "estimation-vocabulary/internal/model"
-	"fmt"
+	_alg "estimation-vocabulary/algorithm"
 	"sync"
 	"time"
 )
@@ -39,9 +37,9 @@ type UserTestStruct struct {
 	TotalNum int64
 	//VocabularyInfo *_pkg.VocabularyInfo
 	//TODO 确定Vocabulary结构体的类别
-	VocabularyInfo *_model.Vocabulary
+	VocabularyInfo *_alg.VocabularyInfo
 	// 所有难度的对应数据，key为level
-	LadderInfo map[string]*_pkg.LadderInfo
+	LadderInfo map[string]*_alg.LadderInfo
 	// 详细信息，包括每个阶段的认识数目以及对应的wordlist,level作为key,wordId为value
 	WordInfo  map[string][]int64
 	StartTime time.Time
@@ -65,7 +63,6 @@ func JudgeIfRepeated(testId string, level string, wordId int64) (bool, error) {
 	default:
 		return false, errors.New("userInfo is not *UserTestStruct type")
 	}
-	fmt.Println(user)
 
 	// 这里需要WordInfo
 	wordIdList, ok := user.WordInfo[level]

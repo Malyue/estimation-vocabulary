@@ -36,6 +36,7 @@ var levels = []LevelStruct{
 		}
 	}
 */
+
 // 批处理接收结构
 type Batch struct {
 	WordList []VocabularyBatch `json:"wordList"`
@@ -78,7 +79,7 @@ func StartTest(c *gin.Context) {
 		Score:    0,
 		TotalNum: 0,
 		//VocabularyInfo: &_alg.VocabularyInfo{},
-		VocabularyInfo: &_model.Vocabulary{},
+		VocabularyInfo: &_alg.VocabularyInfo{},
 		LadderInfo:     make(map[string]*_alg.LadderInfo),
 		WordInfo:       make(map[string][]int64),
 		StartTime:      time.Now(),
@@ -134,11 +135,15 @@ func GetWord(c *gin.Context) {
 	}
 
 	// 4.TODO 返回需要的数据
-
+	vInfo := _alg.VocabularyInfo{
+		WordId: v.Id,
+		Word:   v.Word,
+	}
+	//返回
 	_internal.ResponseSuccess(c, _internal.UserTestStruct{
 		Level:          user.Level,
 		TotalNum:       totalNum,
-		VocabularyInfo: &v,
+		VocabularyInfo: &vInfo,
 	})
 	// testid
 	// 随机获得，
@@ -268,3 +273,7 @@ func GetScoreBatch(c *gin.Context) {
 
 	//_internal.ResponseSuccess()
 }
+
+//TODO 逻辑
+//TODO 1、建立测试链接：创建testId，加入map，返回testId
+//TODO 2、前端接收到链接建立成功的状态码，则发起请求获取单词（需要携带当前的总题目数）

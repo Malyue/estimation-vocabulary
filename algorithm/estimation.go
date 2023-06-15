@@ -18,9 +18,9 @@ func ForecastVocabulary(userinfo *UserInfo) {
 		// 当前阶层词汇量的下界
 		lowerBound := levelVocabulary[curLadderID][0]
 		// 当前阶层认识的词
-		realizeNum := curLadderInfo.knownNun
+		realizeNum := curLadderInfo.KnownNun
 		// 当前阶层回答的词的总数
-		curSum := curLadderInfo.curNum
+		curSum := curLadderInfo.CurNum
 		// 当前阶层回答的词的正确率
 		rate := 1.0 * realizeNum / curSum
 		// 预测当前阶层知道的词的总数
@@ -51,20 +51,20 @@ func LadderHandler(userinfo *UserInfo) {
 
 	// 触发阶梯变化的临界识别率
 	baseRealizeRate := 0.2
-	if userinfo.VocabularyInfo.known {
+	if userinfo.VocabularyInfo.Known {
 		// 认识单词
 		baseRealizeRate = 0.8
-		userinfo.LadderInfo[level].knownNun++
+		userinfo.LadderInfo[level].KnownNun++
 	}
 	userinfo.TotalNum++
-	userinfo.LadderInfo[level].curNum++
+	userinfo.LadderInfo[level].CurNum++
 	// TODO 记录当前词汇
 	// 计算用户在当前阶段的认识率
-	var realizeRate = float64(userinfo.LadderInfo[level].knownNun) / float64(userinfo.LadderInfo[level].curNum)
-	if userinfo.VocabularyInfo.known && realizeRate >= baseRealizeRate && userinfo.LadderInfo[level].curNum >= baseChangeNum {
+	var realizeRate = float64(userinfo.LadderInfo[level].KnownNun) / float64(userinfo.LadderInfo[level].CurNum)
+	if userinfo.VocabularyInfo.Known && realizeRate >= baseRealizeRate && userinfo.LadderInfo[level].CurNum >= baseChangeNum {
 		UpgradeLadder(userinfo)
 	}
-	if !userinfo.VocabularyInfo.known && realizeRate <= baseRealizeRate && userinfo.LadderInfo[level].curNum >= baseChangeNum {
+	if !userinfo.VocabularyInfo.Known && realizeRate <= baseRealizeRate && userinfo.LadderInfo[level].CurNum >= baseChangeNum {
 		DowngradeLadder(userinfo)
 	}
 }

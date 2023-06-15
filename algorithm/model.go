@@ -38,30 +38,27 @@ type UserInfo struct {
 // 阶梯相关数据
 type LadderInfo struct {
 	// 该难度答题数
-	curNum int64
+	CurNum int64
 	// 该难度认识数
-	knownNun int64
+	KnownNun int64
 }
 
 // 词汇相关数据
 type VocabularyInfo struct {
-	wordId int64
-	word   string
-	level  int64
-	known  bool
+	WordId int64
+	Word   string
+	Known  bool
 }
 
 type Ladder struct {
 	// 在当前阶梯（难度）所答的词数
-	curNum int64
+	CurNum int64
 	// 在当前阶梯（难度）所认识的词数
-	realizeNum int64
+	RealizeNum int64
 	// 总共回答的词数
-	totalNum int64
-	// 当前难度
-	level int64
+	TotalNum int64
 	// 是否结束
-	endFlag bool
+	EndFlag bool
 }
 
 func LaderHandler(curLader *Ladder, vocabulary *VocabularyInfo) *Ladder {
