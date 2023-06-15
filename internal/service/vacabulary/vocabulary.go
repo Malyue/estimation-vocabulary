@@ -155,12 +155,13 @@ func GetWord(c *gin.Context) {
 		if err != nil {
 			_internal.ResponseError(c, _internal.CodeWordRepeat)
 		}
-		if ok {
+		if !ok {
 			break
 		}
 	}
 	fmt.Println(v, "&&&&&&&&&&&&&&")
-	//WordInfo记录已返回的单词
+
+	//TODO WordInfo记录已返回的单词,这里是不是要放在单词被算法处理之后
 	user.WordInfo[user.Level] = append(user.WordInfo[user.Level], v.Id)
 	//修改user信息
 	user.VocabularyInfo = &_alg.VocabularyInfo{
