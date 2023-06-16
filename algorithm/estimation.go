@@ -1,6 +1,8 @@
 package algorithm
 
-import "errors"
+import (
+	"errors"
+)
 
 // TODO 应该遍历所有阶梯 在用户点击结束的时候才调用
 // @Title forecastVocabulary
@@ -68,6 +70,7 @@ func LadderHandler(userinfo *UserInfo) (bool, error) {
 	if !userinfo.VocabularyInfo.Known && realizeRate <= baseRealizeRate && userinfo.LadderInfo[level].CurNum >= baseChangeNum {
 		return DowngradeLadder(userinfo)
 	}
+
 	if userinfo.EndFlag && userinfo.TotalNum >= 30 {
 		ForecastVocabulary(userinfo)
 	}
