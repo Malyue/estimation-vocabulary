@@ -120,17 +120,17 @@ func StartTest(c *gin.Context) {
 	for i := 0; i < 6; i++ {
 		switch i {
 		case 0:
-			user.LadderInfo["A1"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+			user.LadderInfo["A1"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
 		case 1:
-			user.LadderInfo["A2"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+			user.LadderInfo["A2"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
 		case 2:
-			user.LadderInfo["B1"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+			user.LadderInfo["B1"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
 		case 3:
-			user.LadderInfo["B2"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+			user.LadderInfo["B2"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
 		case 4:
-			user.LadderInfo["C1"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+			user.LadderInfo["C1"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
 		case 5:
-			user.LadderInfo["C2"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+			user.LadderInfo["C2"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
 		}
 	}
 	_internal.UserMap.Store(testId, &user)
@@ -251,12 +251,12 @@ func UpdateLevel(c *gin.Context) {
 	//if _, ok := user.LadderInfo[level]; !ok {
 	//	user.LadderInfo[level] = &_alg.LadderInfo{
 	//		CurNum:   0,
-	//		KnownNun: 0,
+	//		KnownNum: 0,
 	//	}
 	//}
 	//user.LadderInfo[level].CurNum++
 	//if wordReq.Known {
-	//	user.LadderInfo[level].KnownNun++
+	//	user.LadderInfo[level].KnownNum++
 	//}
 
 	//TODO 更新userTestStruct的VocabularyInfo

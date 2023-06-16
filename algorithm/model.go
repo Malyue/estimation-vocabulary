@@ -40,7 +40,7 @@ type LadderInfo struct {
 	// 该难度答题数
 	CurNum int64
 	// 该难度认识数
-	KnownNun int64
+	KnownNum int64
 }
 
 // 词汇相关数据
