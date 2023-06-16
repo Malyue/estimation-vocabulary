@@ -1,5 +1,7 @@
 package algorithm
 
+import "errors"
+
 // TODO 应该遍历所有阶梯 在用户点击结束的时候才调用
 // @Title forecastVocabulary
 // @Description
@@ -38,27 +40,18 @@ func ForecastVocabulary(userinfo *UserInfo) {
 // @Title ladderHandler
 // @Description   每次提交都要调用，根据单词的认识情况判断是否切换阶层
 // @Param curLadder 当前阶层信息
-// @Param vocabulary 当前单词信息
+// @Param vocabulary 当前单词信息·
 // @Return LadderInfo 修改过后的阶层信息
-func LadderHandler(userinfo *UserInfo) {
+func LadderHandler(userinfo *UserInfo) (bool, error) {
 	// TODO 有可能需要更改
-	if userinfo.EndFlag {
-		ForecastVocabulary(userinfo)
-		return
-	}
+
 	level := userinfo.Level
 	// 触发阶梯变化最少的单词个数
 	baseChangeNum := int64(5)
 
 	// 触发阶梯变化的临界识别率
 	baseRealizeRate := 0.2
-	//LadderInfo初始化
-	if _, ok := userinfo.LadderInfo[level]; !ok {
-		userinfo.LadderInfo[level] = &LadderInfo{
-			CurNum:   0,
-			KnownNun: 0,
-		}
-	}
+
 	if userinfo.VocabularyInfo.Known {
 		// 认识单词
 		baseRealizeRate = 0.8
@@ -70,11 +63,15 @@ func LadderHandler(userinfo *UserInfo) {
 	// 计算用户在当前阶段的认识率
 	var realizeRate = float64(userinfo.LadderInfo[level].KnownNun) / float64(userinfo.LadderInfo[level].CurNum)
 	if userinfo.VocabularyInfo.Known && realizeRate >= baseRealizeRate && userinfo.LadderInfo[level].CurNum >= baseChangeNum {
-		UpgradeLadder(userinfo)
+		return UpgradeLadder(userinfo)
 	}
 	if !userinfo.VocabularyInfo.Known && realizeRate <= baseRealizeRate && userinfo.LadderInfo[level].CurNum >= baseChangeNum {
-		DowngradeLadder(userinfo)
+		return DowngradeLadder(userinfo)
 	}
+	if userinfo.EndFlag && userinfo.TotalNum >= 30 {
+		ForecastVocabulary(userinfo)
+	}
+	return true, nil
 }
 
 // @Title upgradeLadder
@@ -82,24 +79,32 @@ func LadderHandler(userinfo *UserInfo) {
 // @Param curLadder
 // @Return LadderInfo
 
-func UpgradeLadder(userinfo *UserInfo) {
-	level := level2Num[userinfo.Level]
+func UpgradeLadder(userinfo *UserInfo) (bool, error) {
+	level, ok := level2Num[userinfo.Level]
+	if !ok {
+		return false, errors.New("level invalid")
+	}
 	if level == 5 {
-		return
+		return true, errors.New("can't upgrade")
 	}
 	level++
 	userinfo.Level = num2Level[level]
+	return true, nil
 }
 
 // @Title downgradeLadder
 // @Description 提高难度
 // @Param curLadder
 // @Return LadderInfo
-func DowngradeLadder(userinfo *UserInfo) {
-	level := level2Num[userinfo.Level]
+func DowngradeLadder(userinfo *UserInfo) (bool, error) {
+	level, ok := level2Num[userinfo.Level]
+	if !ok {
+		return false, errors.New("level invalid")
+	}
 	if level == 0 {
-		return
+		return true, errors.New("can't downgrade")
 	}
 	level--
 	userinfo.Level = num2Level[level]
+	return true, nil
 }
