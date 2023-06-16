@@ -8,7 +8,7 @@ import "errors"
 // @Param curLadder
 // @Return int64
 func ForecastVocabulary(userinfo *UserInfo) {
-	result := int64(0)
+	result := float64(0)
 	// TODO 计算分数
 	// 反应不同阶级回答情况的表
 	var diffTagIdentifyMap map[string]*LadderInfo
@@ -24,17 +24,17 @@ func ForecastVocabulary(userinfo *UserInfo) {
 		// 当前阶层回答的词的总数
 		curSum := curLadderInfo.CurNum
 		// 当前阶层回答的词的正确率
-		rate := 1.0 * realizeNum / curSum
+		rate := float64(realizeNum) / float64(curSum)
 		// 预测当前阶层知道的词的总数
-		estVcbSize := lowerBound + ((upperBound - lowerBound) * rate)
+		estVcbSize := float64(lowerBound) + (float64(upperBound-lowerBound) * rate)
 		// 当前阶层的权重
-		weight := 1.0 * curSum / userinfo.TotalNum
+		weight := float64(curSum) / float64(userinfo.TotalNum)
 
 		// 当前阶层在加权后知道的词的总数
 		result += estVcbSize * weight
 
 	}
-	userinfo.Score = result
+	userinfo.Score = int64(result)
 }
 
 // @Title ladderHandler
