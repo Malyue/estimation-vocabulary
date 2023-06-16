@@ -1,6 +1,9 @@
 package algorithm
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // TODO 应该遍历所有阶梯 在用户点击结束的时候才调用
 // @Title forecastVocabulary
@@ -32,7 +35,7 @@ func ForecastVocabulary(userinfo *UserInfo) {
 
 		// 当前阶层在加权后知道的词的总数
 		result += estVcbSize * weight
-
+		fmt.Println("result = ", result)
 	}
 	userinfo.Score = int64(result)
 }
@@ -44,8 +47,16 @@ func ForecastVocabulary(userinfo *UserInfo) {
 // @Return LadderInfo 修改过后的阶层信息
 func LadderHandler(userinfo *UserInfo) (bool, error) {
 	// TODO 有可能需要更改
-
+	if userinfo.EndFlag && userinfo.TotalNum >= 2 {
+		ForecastVocabulary(userinfo)
+	}
 	level := userinfo.Level
+	if _, ok := userinfo.LadderInfo[level]; !ok {
+		userinfo.LadderInfo[level] = &LadderInfo{
+			CurNum:   int64(0),
+			KnownNum: int64(0),
+		}
+	}
 	// 触发阶梯变化最少的单词个数
 	baseChangeNum := int64(5)
 
@@ -67,9 +78,6 @@ func LadderHandler(userinfo *UserInfo) (bool, error) {
 	}
 	if !userinfo.VocabularyInfo.Known && realizeRate <= baseRealizeRate && userinfo.LadderInfo[level].CurNum >= baseChangeNum {
 		return DowngradeLadder(userinfo)
-	}
-	if userinfo.EndFlag && userinfo.TotalNum >= 30 {
-		ForecastVocabulary(userinfo)
 	}
 	return true, nil
 }
