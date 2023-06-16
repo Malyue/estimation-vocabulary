@@ -1,6 +1,28 @@
 {
   "wordList": [
-    {"word": "computer","known": true},
-    {"word":"open","known": true}
+    {
+      "word": "a",
+      "known": true
+    },
+    {
+      "word": "and",
+      "known": true
+    },
+    {
+      "word": "have",
+      "known": true
+    },
+    {
+      "word": "he",
+      "known": true
+    },
+    {
+      "word": "at",
+      "known": true
+    },
+    {
+      "word": "but",
+      "known": true
+    }
   ]
 }

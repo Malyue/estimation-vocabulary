@@ -98,7 +98,7 @@ func StartTest(c *gin.Context) {
 	level := c.Query("level")
 	//
 	//level := c.Query("level")
-	score := levelVocabulary[level][0]
+	score := int64(0)
 	//fmt.Println(level)
 
 	//TODO 根据level设置初始的Score（Score初始值为当前等级的区间下限）
@@ -116,23 +116,23 @@ func StartTest(c *gin.Context) {
 		EndFlag:        false,
 		StartTime:      time.Now(),
 	}
-	//初始化LadderInfo
-	for i := 0; i < 6; i++ {
-		switch i {
-		case 0:
-			user.LadderInfo["A1"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
-		case 1:
-			user.LadderInfo["A2"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
-		case 2:
-			user.LadderInfo["B1"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
-		case 3:
-			user.LadderInfo["B2"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
-		case 4:
-			user.LadderInfo["C1"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
-		case 5:
-			user.LadderInfo["C2"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
-		}
-	}
+	////初始化LadderInfo
+	//for i := 0; i < 6; i++ {
+	//	switch i {
+	//	case 0:
+	//		user.LadderInfo["A1"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
+	//	case 1:
+	//		user.LadderInfo["A2"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
+	//	case 2:
+	//		user.LadderInfo["B1"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
+	//	case 3:
+	//		user.LadderInfo["B2"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
+	//	case 4:
+	//		user.LadderInfo["C1"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
+	//	case 5:
+	//		user.LadderInfo["C2"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
+	//	}
+	//}
 	_internal.UserMap.Store(testId, &user)
 	// 3.返回一个testId
 	_internal.ResponseSuccess(c, testId)
@@ -244,6 +244,24 @@ func UpdateLevel(c *gin.Context) {
 
 	user := userTestMap.(*_internal.UserTestStruct)
 	fmt.Println(user, "*************")
+	//for i := 0; i < 6; i++ {
+	//	switch i {
+	//	case 0:
+	//		fmt.Println(user.LadderInfo["A1"], "*************")
+	//	case 1:
+	//		fmt.Println(user.LadderInfo["A2"], "*************")
+	//	case 2:
+	//		fmt.Println(user.LadderInfo["B1"], "*************")
+	//	case 3:
+	//		fmt.Println(user.LadderInfo["B2"], "*************")
+	//	case 4:
+	//		fmt.Println(user.LadderInfo["C1"], "*************")
+	//	case 5:
+	//		fmt.Println(user.LadderInfo["C2"], "*************")
+	//	}
+	//}
+	//fmt.Println("*************")
+
 	//TODO 更新userTestStruct的LadderInfo 信息(算法里面实现了这个逻辑，这段去掉)
 	//level := user.Level
 	//
@@ -251,12 +269,12 @@ func UpdateLevel(c *gin.Context) {
 	//if _, ok := user.LadderInfo[level]; !ok {
 	//	user.LadderInfo[level] = &_alg.LadderInfo{
 	//		CurNum:   0,
-	//		KnownNun: 0,
+	//		KnownNum: 0,
 	//	}
 	//}
 	//user.LadderInfo[level].CurNum++
 	//if wordReq.Known {
-	//	user.LadderInfo[level].KnownNun++
+	//	user.LadderInfo[level].KnownNum++
 	//}
 
 	//TODO 更新userTestStruct的VocabularyInfo
@@ -349,6 +367,7 @@ func GetResult(c *gin.Context) {
 
 	score := user.Score
 	_internal.ResponseSuccess(c, score)
+	return
 }
 
 func Exit(c *gin.Context) {
@@ -359,11 +378,13 @@ func Exit(c *gin.Context) {
 	_internal.UserMap.Delete(testId)
 	// 3. TODO 返回前端是否成功
 	_internal.ResponseSuccess(c, nil)
+	return
 }
 
 func Test(c *gin.Context) {
 	fmt.Println("test service success")
 	_internal.ResponseSuccess(c, nil)
+	return
 }
 
 // @Method POST
