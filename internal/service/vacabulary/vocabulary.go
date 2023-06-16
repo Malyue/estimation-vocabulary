@@ -264,6 +264,7 @@ func UpdateLevel(c *gin.Context) {
 	wordIdInt, err := strconv.ParseInt(wordReq.WordId, 10, 64)
 	if err != nil {
 		_internal.ResponseError(c, _internal.CodeErrParseInt)
+		return
 	}
 
 	user.VocabularyInfo = &_alg.VocabularyInfo{
@@ -287,7 +288,11 @@ func UpdateLevel(c *gin.Context) {
 	// TODO 3.调用算法层，参数统一为UserInfo结构,具体怎么调用看算法层的方法,然后根据返回结构去修改全局map的信息
 	// ladderInfo,exist := _internal.UserMap[testId]
 	//调用算法层
-	_alg.LadderHandler(userInfo)
+	ok, err := _alg.LadderHandler(userInfo)
+	if !ok {
+		_internal.ResponseErrorWithData(c, _internal.CodeLevelInvalid, err.Error())
+	}
+
 	//覆盖算法返回结果
 	user.Score = userInfo.Score
 	user.TotalNum = userInfo.TotalNum
@@ -331,7 +336,11 @@ func GetResult(c *gin.Context) {
 		Level:          user.Level,
 	}
 
-	_alg.LadderHandler(userInfo)
+	ok, err := _alg.LadderHandler(userInfo)
+	if !ok {
+		_internal.ResponseErrorWithData(c, _internal.CodeLevelInvalid, err.Error())
+		return
+	}
 	//这里省略赋值回userTestStruct,直接返回
 	user.Score = userInfo.Score
 	user.TotalNum = userInfo.TotalNum

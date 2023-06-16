@@ -12,6 +12,7 @@ const (
 	CodeErrJsonFormat
 	CodeErrParseBody
 	CodeErrParseInt
+	CodeLevelInvalid
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -24,6 +25,7 @@ var codeMsgMap = map[ResCode]string{
 	CodeErrJsonFormat: "json格式错误，无法解析",
 	CodeErrParseBody:  "解析body错误",
 	CodeErrParseInt:   "ParseInt错误",
+	CodeLevelInvalid:  "非法难度",
 }
 
 // Msg 返回特定的错误提示信息
