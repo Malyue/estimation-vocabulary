@@ -85,7 +85,7 @@ func UpgradeLadder(userinfo *UserInfo) (bool, error) {
 		return false, errors.New("level invalid")
 	}
 	if level == 5 {
-		return true, errors.New("can't upgrade")
+		return true, nil
 	}
 	level++
 	userinfo.Level = num2Level[level]
@@ -102,7 +102,7 @@ func DowngradeLadder(userinfo *UserInfo) (bool, error) {
 		return false, errors.New("level invalid")
 	}
 	if level == 0 {
-		return true, errors.New("can't downgrade")
+		return true, nil
 	}
 	level--
 	userinfo.Level = num2Level[level]
