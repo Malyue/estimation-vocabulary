@@ -13,6 +13,8 @@ const (
 	CodeErrParseBody
 	CodeErrParseInt
 	CodeLevelInvalid
+	CodeLevelRequire
+	CodeWrongLevel
 )
 
 var codeMsgMap = map[ResCode]string{
@@ -26,6 +28,8 @@ var codeMsgMap = map[ResCode]string{
 	CodeErrParseBody:  "解析body错误",
 	CodeErrParseInt:   "ParseInt错误",
 	CodeLevelInvalid:  "非法难度",
+	CodeLevelRequire:  "需要正确的level参数",
+	CodeWrongLevel:    "错误的level",
 }
 
 // Msg 返回特定的错误提示信息

@@ -96,6 +96,15 @@ func ShowLevelList(c *gin.Context) {
 func StartTest(c *gin.Context) {
 	// TODO 从前端拿到用户初始所选level
 	level := c.Query("level")
+	if level == "" {
+		_internal.ResponseError(c, _internal.CodeLevelRequire)
+		return
+	}
+	if _, ok := levelVocabulary[level]; !ok {
+		_internal.ResponseError(c, _internal.CodeWrongLevel)
+		return
+	}
+
 	//
 	//level := c.Query("level")
 	score := int64(0)
