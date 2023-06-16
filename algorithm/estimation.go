@@ -52,13 +52,6 @@ func LadderHandler(userinfo *UserInfo) {
 
 	// 触发阶梯变化的临界识别率
 	baseRealizeRate := 0.2
-	//LadderInfo初始化
-	if _, ok := userinfo.LadderInfo[level]; !ok {
-		userinfo.LadderInfo[level] = &LadderInfo{
-			CurNum:   0,
-			KnownNun: 0,
-		}
-	}
 	if userinfo.VocabularyInfo.Known {
 		// 认识单词
 		baseRealizeRate = 0.8

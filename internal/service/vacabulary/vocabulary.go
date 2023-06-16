@@ -105,7 +105,7 @@ func StartTest(c *gin.Context) {
 
 	// 2. 创建一个map
 	testId := uuid.New().String()
-	_internal.UserMap.Store(testId, &_internal.UserTestStruct{
+	user := _internal.UserTestStruct{
 		Level:    level,
 		Score:    score,
 		TotalNum: 0,
@@ -115,8 +115,25 @@ func StartTest(c *gin.Context) {
 		WordInfo:       make(map[string][]int64),
 		EndFlag:        false,
 		StartTime:      time.Now(),
-	})
-
+	}
+	//初始化LadderInfo
+	for i := 0; i < 6; i++ {
+		switch i {
+		case 0:
+			user.LadderInfo["A1"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+		case 1:
+			user.LadderInfo["A2"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+		case 2:
+			user.LadderInfo["B1"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+		case 3:
+			user.LadderInfo["B2"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+		case 4:
+			user.LadderInfo["C1"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+		case 5:
+			user.LadderInfo["C2"] = &_alg.LadderInfo{CurNum: 0, KnownNun: 0}
+		}
+	}
+	_internal.UserMap.Store(testId, &user)
 	// 3.返回一个testId
 	_internal.ResponseSuccess(c, testId)
 	c.Set("test_id", testId)

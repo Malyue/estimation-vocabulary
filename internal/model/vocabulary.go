@@ -37,7 +37,11 @@ func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 	//设置随机数种子
 	rand.Seed(time.Now().UnixNano())
 
-	err := db.Model(&Vocabulary{}).Where("level = ?", v.Level).Order("RAND()").Limit(1).Find(&v).Error
+	err := db.Debug().Model(&Vocabulary{}).
+		Where("level = ?", v.Level).
+		Order("RAND()").Limit(1).
+		Find(&v).Error
+	//err := db.Raw("SELECT * FROM vocabularies WHERE level = ? ORDER BY RAND() LIMIT 1", v.Level).Scan(&v)
 	if err != nil {
 		return err
 	}
