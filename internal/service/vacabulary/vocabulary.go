@@ -345,6 +345,9 @@ func Exit(c *gin.Context) {
 	// 2.TODO 删掉map
 	_internal.UserMap.Delete(testId)
 	// 3. TODO 返回前端是否成功
+	if batch, _ := c.Get("batch"); batch == true {
+		return
+	}
 	_internal.ResponseSuccess(c, nil)
 	return
 }
@@ -450,6 +453,7 @@ func GetScoreBatch(c *gin.Context) {
 	}
 	// TODO 计算出最后成绩然后返回
 	GetResult(c)
+	Exit(c)
 	log.Println(batchData.Result)
 	//_internal.ResponseSuccess()
 
