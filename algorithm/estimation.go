@@ -2,7 +2,6 @@ package algorithm
 
 import (
 	"errors"
-	"fmt"
 )
 
 // TODO 应该遍历所有阶梯 在用户点击结束的时候才调用
@@ -35,7 +34,7 @@ func ForecastVocabulary(userinfo *UserInfo) {
 
 		// 当前阶层在加权后知道的词的总数
 		result += estVcbSize * weight
-		fmt.Println("result = ", result)
+		//fmt.Println("result = ", result)
 	}
 	userinfo.Score = int64(result)
 }

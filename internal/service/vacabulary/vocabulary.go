@@ -55,11 +55,15 @@ var levelVocabulary = map[string][2]int64{
 
 // 批处理接收结构
 type Batch struct {
-	WordList []VocabularyBatch `json:"wordList"`
+	BroadVocabTest  []VocabularyBatch `json:"broad_vocab_test"`
+	NarrowVocabTest []VocabularyBatch `json:"narrow_vocab_test"`
+	Result          int               `json:"result"`
+	//WordList []VocabularyBatch `json:"wordList"`
 }
 
 type VocabularyBatch struct {
-	Word  string `json:"word"`
+	//Word  string `json:"word"`
+	Value string `json:"value"`
 	Known bool   `json:"known"`
 }
 
@@ -104,11 +108,7 @@ func StartTest(c *gin.Context) {
 		_internal.ResponseError(c, _internal.CodeWrongLevel)
 		return
 	}
-
-	//
-	//level := c.Query("level")
 	score := int64(0)
-	//fmt.Println(level)
 
 	//TODO 根据level设置初始的Score（Score初始值为当前等级的区间下限）
 
@@ -125,27 +125,17 @@ func StartTest(c *gin.Context) {
 		EndFlag:        false,
 		StartTime:      time.Now(),
 	}
-	////初始化LadderInfo
-	//for i := 0; i < 6; i++ {
-	//	switch i {
-	//	case 0:
-	//		user.LadderInfo["A1"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
-	//	case 1:
-	//		user.LadderInfo["A2"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
-	//	case 2:
-	//		user.LadderInfo["B1"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
-	//	case 3:
-	//		user.LadderInfo["B2"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
-	//	case 4:
-	//		user.LadderInfo["C1"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
-	//	case 5:
-	//		user.LadderInfo["C2"] = &_alg.LadderInfo{CurNum: 0, KnownNum: 0}
-	//	}
-	//}
+
 	_internal.UserMap.Store(testId, &user)
 	// 3.返回一个testId
-	_internal.ResponseSuccess(c, testId)
+
 	c.Set("test_id", testId)
+
+	if batch, _ := c.Get("batch"); batch == true {
+		return
+	}
+	_internal.ResponseSuccess(c, testId)
+
 }
 
 //	@Method Get
@@ -179,7 +169,6 @@ func GetWord(c *gin.Context) {
 		if err != nil {
 			_internal.ResponseError(c, _internal.CodeWordSelectErr)
 		}
-		fmt.Println("[WORD]", v.Word, v.Id)
 
 		//判断随机抽出来的单词是否重复
 		//TODO 解决uuid存储int问题（uuid是int128）
@@ -193,7 +182,6 @@ func GetWord(c *gin.Context) {
 			break
 		}
 	}
-	fmt.Println(v, "&&&&&&&&&&&&&&")
 
 	//TODO WordInfo记录已返回的单词,这里是不是要放在单词被算法处理之后
 	user.WordInfo[user.Level] = append(user.WordInfo[user.Level], v.Id)
@@ -210,7 +198,9 @@ func GetWord(c *gin.Context) {
 		Word:     v.Word,
 		TotalNum: user.TotalNum,
 	}
-	fmt.Println(res, "*********")
+	if batch, _ := c.Get("batch"); batch == true {
+		return
+	}
 	//返回
 	_internal.ResponseSuccess(c, res)
 }
@@ -252,39 +242,6 @@ func UpdateLevel(c *gin.Context) {
 	}
 
 	user := userTestMap.(*_internal.UserTestStruct)
-	fmt.Println(user, "*************")
-	//for i := 0; i < 6; i++ {
-	//	switch i {
-	//	case 0:
-	//		fmt.Println(user.LadderInfo["A1"], "*************")
-	//	case 1:
-	//		fmt.Println(user.LadderInfo["A2"], "*************")
-	//	case 2:
-	//		fmt.Println(user.LadderInfo["B1"], "*************")
-	//	case 3:
-	//		fmt.Println(user.LadderInfo["B2"], "*************")
-	//	case 4:
-	//		fmt.Println(user.LadderInfo["C1"], "*************")
-	//	case 5:
-	//		fmt.Println(user.LadderInfo["C2"], "*************")
-	//	}
-	//}
-	//fmt.Println("*************")
-
-	//TODO 更新userTestStruct的LadderInfo 信息(算法里面实现了这个逻辑，这段去掉)
-	//level := user.Level
-	//
-	////初始化当前等级的LaderInfo
-	//if _, ok := user.LadderInfo[level]; !ok {
-	//	user.LadderInfo[level] = &_alg.LadderInfo{
-	//		CurNum:   0,
-	//		KnownNum: 0,
-	//	}
-	//}
-	//user.LadderInfo[level].CurNum++
-	//if wordReq.Known {
-	//	user.LadderInfo[level].KnownNum++
-	//}
 
 	//TODO 更新userTestStruct的VocabularyInfo
 	//wordId 将string转int64
@@ -310,7 +267,7 @@ func UpdateLevel(c *gin.Context) {
 		EndFlag:        user.EndFlag,
 		Level:          user.Level,
 	}
-	fmt.Println(userInfo)
+	//fmt.Println(userInfo)
 
 	// TODO 3.调用算法层，参数统一为UserInfo结构,具体怎么调用看算法层的方法,然后根据返回结构去修改全局map的信息
 	// ladderInfo,exist := _internal.UserMap[testId]
@@ -318,22 +275,20 @@ func UpdateLevel(c *gin.Context) {
 	ok, err := _alg.LadderHandler(userInfo)
 	if !ok {
 		_internal.ResponseErrorWithData(c, _internal.CodeLevelInvalid, err.Error())
+		return
 	}
 
 	//覆盖算法返回结果
 	user.Score = userInfo.Score
 	user.TotalNum = userInfo.TotalNum
-	//user.LadderInfo = userInfo.LadderInfo
 	user.Level = userInfo.Level
 
 	// TODO 4.返回前端，告知请求成功，正常的话不需要数据返回
 
-	_internal.ResponseSuccess(c, nil)
-	/*
+	if batch, _ := c.Get("batch"); batch == true {
 		return
-		score:
-		level:
-	*/
+	}
+	_internal.ResponseSuccess(c, nil)
 }
 
 // 接口
@@ -375,6 +330,10 @@ func GetResult(c *gin.Context) {
 	user.Level = userInfo.Level
 
 	score := user.Score
+	//if batch, _ := c.Get("batch"); batch == true {
+	//	return
+	//}
+
 	_internal.ResponseSuccess(c, score)
 	return
 }
@@ -400,7 +359,12 @@ func Test(c *gin.Context) {
 // @Parm form-data
 // @Describe 批处理
 func GetScoreBatch(c *gin.Context) {
+
+	//TODO 新增一个全局count计量查不到的单词数量，如果占比较多，说明这组数据没有意义，则直接退出，报错。
+	vacCount := float64(0)
+
 	file, _ := c.FormFile("file")
+	c.Set("batch", true)
 	// 识别后缀，这里直接限制json
 	ext := filepath.Ext(file.Filename)
 	if ext != ".json" {
@@ -439,23 +403,29 @@ func GetScoreBatch(c *gin.Context) {
 	testid, _ := c.Get("test_id")
 	testId := testid.(string)
 
-	//queryParams, _ = url.ParseQuery(c.Request.URL.RawQuery)
-	////c.Request.URL.Query().Set("level", "A1")
-	//queryParams.Set("test_id", testId)
-	//c.Request.URL.RawQuery = queryParams.Encode()
-	//cCopy = c.Copy()
-	//c.Request.URL.RawQuery = cCopy.Request.URL.RawQuery
-
 	// TODO 如何根据解析出的json去调用我们自己的方法
-	vocabularyList := batchData.WordList
+	vocabularyList := batchData.BroadVocabTest
 
+	vocabularyList = append(vocabularyList, batchData.NarrowVocabTest...)
 	// 拆分一下单词构造一下然后逐个调用接口
 	for _, vocabulary := range vocabularyList {
 		v := &_model.Vocabulary{
-			Word: vocabulary.Word,
+			Word: vocabulary.Value,
 		}
 		// 根据名称查wordid
-		v.LoadByWord()
+		// TODO 如果查无此单词，则vacCount++ 和 continue
+		err = v.LoadByWord()
+		if err != nil {
+			if err.Error() == "RecordNotFound" {
+				vacCount++
+				log.Println(err.Error())
+				continue
+			}
+			//TODO 这里可以直接返回报错，或者直接continue继续执行
+			log.Println(err)
+			_internal.ResponseError(c, _internal.CodeWordSelectErr)
+			//continue
+		}
 		// 去调用提交单词接口
 		jsonData := map[string]interface{}{
 			"test_id": testId,
@@ -473,9 +443,16 @@ func GetScoreBatch(c *gin.Context) {
 		UpdateLevel(c)
 	}
 
+	//TODO 判断vacCount占用比例，如果
+	wordInvalidRate := vacCount / float64(len(vocabularyList))
+	if wordInvalidRate >= 0.3 {
+		_internal.ResponseError(c, _internal.CodeOops)
+	}
 	// TODO 计算出最后成绩然后返回
 	GetResult(c)
+	log.Println(batchData.Result)
 	//_internal.ResponseSuccess()
+
 }
 
 //TODO 逻辑
