@@ -397,7 +397,7 @@ func GetScoreBatch(c *gin.Context) {
 	// 创建一个map,这里自己设置从哪个等级开始
 	queryParams, _ := url.ParseQuery(c.Request.URL.RawQuery)
 	//c.Request.URL.Query().Set("level", "A1")
-	queryParams.Set("level", "A1")
+	queryParams.Set("level", "B1")
 	c.Request.URL.RawQuery = queryParams.Encode()
 	cCopy := c.Copy()
 	c.Request.URL.RawQuery = cCopy.Request.URL.RawQuery
@@ -418,16 +418,9 @@ func GetScoreBatch(c *gin.Context) {
 		// 根据名称查wordid
 		// TODO 如果查无此单词，则vacCount++ 和 continue
 		err = v.LoadByWord()
-		if err != nil {
-			if err.Error() == "RecordNotFound" {
-				vacCount++
-				log.Println(err.Error())
-				continue
-			}
-			//TODO 这里可以直接返回报错，或者直接continue继续执行
-			log.Println(err)
-			_internal.ResponseError(c, _internal.CodeWordSelectErr)
-			//continue
+		if err != nil || v.Id == 0 {
+			vacCount++
+			continue
 		}
 		// 去调用提交单词接口
 		jsonData := map[string]interface{}{
@@ -448,8 +441,11 @@ func GetScoreBatch(c *gin.Context) {
 
 	//TODO 判断vacCount占用比例，如果
 	wordInvalidRate := vacCount / float64(len(vocabularyList))
+	//fmt.Println(wordInvalidRate, "sss")
+	//fmt.Println(vacCount, "****")
 	if wordInvalidRate >= 0.3 {
-		_internal.ResponseError(c, _internal.CodeOops)
+		_internal.ResponseErrorWithData(c, _internal.CodeOops, vacCount)
+		return
 	}
 	// TODO 计算出最后成绩然后返回
 	GetResult(c)
@@ -489,4 +485,13 @@ func GetMap(c *gin.Context) {
 		return true
 	})
 	_internal.ResponseSuccess(c, resp)
+}
+
+func DeleteMap(c *gin.Context) {
+	_internal.UserMap.Range(func(key, value interface{}) bool {
+		_internal.UserMap.Delete(key)
+		return true
+	})
+	_internal.ResponseSuccess(c, nil)
+	return
 }

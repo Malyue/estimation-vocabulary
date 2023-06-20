@@ -1,8 +1,6 @@
 package model
 
 import (
-	"errors"
-	"gorm.io/gorm"
 	"math/rand"
 	"time"
 )
@@ -59,12 +57,5 @@ func (v *Vocabulary) SelectVocabularyByLevelRandom() error {
 
 func (v *Vocabulary) LoadByWord() error {
 	result := db.Model(&Vocabulary{}).Where("word=?", v.Word).Find(&v)
-	if result.Error != nil {
-		if result.Error == gorm.ErrRecordNotFound {
-			return errors.New("RecordNotFound")
-		}
-		return result.Error
-	}
-	//select * from vocabularies where word = v.Word
-	return nil
+	return result.Error
 }
