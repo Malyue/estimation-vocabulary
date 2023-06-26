@@ -210,11 +210,6 @@ func GetWord(c *gin.Context) {
 
 func UpdateLevel(c *gin.Context) {
 	//获取用户每个单词的认识与否,并告知算法
-	/*
-		testid:xx,
-		wordId:1,
-		Known:true/false
-	*/
 
 	// TODO 1.获得请求参数
 	//testId := uuid.New().String()
@@ -226,14 +221,7 @@ func UpdateLevel(c *gin.Context) {
 		return
 	}
 	testId := wordReq.TestId
-	/*
-		调用算法
-		wordId:1,
-		curNum:2,
-		curKnown:0,
-		Known:true/false,
-		Score:3000,
-	*/
+
 	// TODO 2.从全局map获取当前testId的一些数据，然后构造算法需要的结构
 	userTestMap, exist := _internal.UserMap.Load(testId)
 	if !exist {
@@ -330,10 +318,6 @@ func GetResult(c *gin.Context) {
 	user.Level = userInfo.Level
 
 	score := user.Score
-	//if batch, _ := c.Get("batch"); batch == true {
-	//	return
-	//}
-
 	_internal.ResponseSuccess(c, score)
 	return
 }
