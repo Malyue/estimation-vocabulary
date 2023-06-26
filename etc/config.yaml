@@ -3,8 +3,8 @@ jwtSecret: estimation@2023-0613
 server:
   addr: :8080
 mysql:
-  addr: 114.132.232.3:3307
-  username: estimation
-  database: estimation
-  password: estimation
+  addr: xxx
+  username: xxx
+  database: xxx
+  password: xxx
 
